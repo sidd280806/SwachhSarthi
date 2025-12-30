@@ -1,0 +1,196 @@
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f6f8f7;
+}
+
+/* PAGE */
+.risk-page {
+  padding: 24px 32px;
+}
+
+/* HEADER */
+.risk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.risk-header h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.risk-header p {
+  margin-top: 6px;
+  color: #5f7c6d;
+}
+
+.header-actions {
+  display: flex;
+  gap: 14px;
+}
+
+.btn-primary {
+  background: #1e8f63;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.btn-outline {
+  background: white;
+  border: 2px solid #1e8f63;
+  color: #1e8f63;
+  padding: 10px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+/* STATS */
+.stats {
+  margin: 28px 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.stat-card {
+  background: white;
+  padding: 22px;
+  border-radius: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.critical {
+  color: #e53935;
+}
+.moderate {
+  color: #f9a825;
+}
+.low {
+  color: #1e8f63;
+}
+
+/* FILTERS */
+.filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.filters button {
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 2px solid #1e8f63;
+  background: white;
+  color: #1e8f63;
+  cursor: pointer;
+}
+
+.filters .active {
+  background: #1e8f63;
+  color: white;
+}
+
+/* ZONES GRID */
+.zones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 22px;
+}
+
+.zone-card {
+  background: white;
+  border-radius: 20px;
+  padding: 22px;
+}
+
+.zone-card h3 {
+  margin: 0;
+}
+
+.location {
+  margin: 6px 0 18px;
+  color: #5f7c6d;
+}
+
+/* RISK */
+.risk-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-bar {
+  background: #e4ebe7;
+  height: 10px;
+  border-radius: 10px;
+  margin: 8px 0 18px;
+}
+
+.progress {
+  height: 100%;
+  border-radius: 10px;
+}
+
+.progress.critical {
+  background: #e53935;
+}
+.progress.moderate {
+  background: #f9a825;
+}
+.progress.low {
+  background: #1e8f63;
+}
+
+/* PREDICTION */
+.prediction {
+  background: #eef3f0;
+  padding: 14px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+
+/* ISSUES */
+.issues span {
+  font-weight: 600;
+}
+
+.tags {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tags span {
+  padding: 6px 14px;
+  border: 1px solid #cfdad4;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+/* FOOTER */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.footer button {
+  background: none;
+  border: none;
+  color: #1e8f63;
+  font-weight: 600;
+  cursor: pointer;
+}

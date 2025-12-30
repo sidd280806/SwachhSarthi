@@ -1,0 +1,82 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 5%;
+  background: white;
+  border-bottom: 1px solid #f1f5f9;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 32px; /* Adjusted gap to fit all 5 items neatly */
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px; /* Space between each heading */
+}
+
+/* Base style for ALL navigation items */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* Precise gap between icon and text */
+  text-decoration: none;
+  color: #64748b; /* Slate grey color from images */
+  font-size: 0.875rem; /* Standard nav font size */
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+/* Hover and Active states for all items */
+.nav-item:hover, 
+.nav-item.active {
+  color: #10b981; /* Highlight green from screenshots */
+}
+
+/* Icons within nav items */
+.nav-item svg {
+  display: block;
+}
+
+.nav-right {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.signin-btn-text {
+  background: none;
+  border: none;
+  color: #1e293b;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.getstarted-btn {
+  background: #064e3b; /* Dark emerald green for the button */
+  color: white;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}

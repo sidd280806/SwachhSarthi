@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAE-ShcVWxipjTTTLG0r6dtMGk9L4_VRCA"></script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Waste Management Assistant</title>
+    <style>
+        :root {
+            --bg-color: #0b141a;
+            --header-color: #202c33;
+            --bot-msg-color: #202c33;
+            --user-msg-color: #005c4b;
+            --text-color: #e9edef;
+            --accent-green: #00a884;
+            --button-bg: #2a3942;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #111b21;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+       .chat-container {
+    width: 100%;
+    height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
+    background-color: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+
+        /* Header */
+        .header {
+            flex-shrink: 0;
+            background-color: var(--header-color);
+            padding: 15px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #00a884;
+        }
+
+        .header-info h4 { margin: 0; font-size: 16px; }
+        .header-info p { margin: 0; font-size: 12px; color: #8696a0; }
+
+        /* Chat Window */
+        #chat-window {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); /* Classic WP pattern */
+            background-blend-mode: overlay;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .bot-msg { background-color: var(--bot-msg-color); align-self: flex-start; }
+        .user-msg { background-color: var(--user-msg-color); align-self: flex-end; }
+
+        /* Buttons (Ready-made answers) */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            background-color: var(--button-bg);
+            border: none;
+            color: var(--accent-green);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .action-btn:hover { background-color: #374045; }
+
+        /* Input Area */
+        .input-area {
+            background-color: var(--header-color);
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            background-color: #2a3942;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 15px;
+            color: white;
+            outline: none;
+        }
+
+        #send-btn {
+            background-color: var(--accent-green);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Scrollbar */
+        #chat-window::-webkit-scrollbar { width: 6px; }
+        #chat-window::-webkit-scrollbar-thumb { background: #374045; }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="header">
+        <img src="https://cdn-icons-png.flaticon.com/512/3299/3299935.png" alt="Gov Logo">
+        <div class="header-info">
+            <h4>Waste Management Bot</h4>
+            <p>Government of India ✓</p>
+        </div>
+    </div>
+
+    <div id="chat-window">
+
+        <!-- Live Map -->
+    <div id="map" style="height:200px; display:none; margin:10px;"></div>
+
+        <!-- Initial Message -->
+        <div class="message bot-msg">
+            Welcome to the Smart Waste Management Assistant. How can I help you today?
+            <div class="button-container">
+                <button class="action-btn" onclick="handleQuickAction('Check Cleaning Status')">📍 Check Cleaning Status ➜</button>
+                <button class="action-btn" onclick="handleQuickAction('My Complaint Status')">📋 My Complaint Status ➜</button>
+                <button class="action-btn" onclick="handleQuickAction('Garbage Risk Level')">⚠️ Garbage Risk Level ➜</button>
+                <button class="action-btn" onclick="handleQuickAction('General Awareness')">🌱 General Awareness ➜</button>
+                 <!-- LINE ~165 : ADD THIS -->
+<button class="action-btn" onclick="getLiveLocation()">📍 Use Live Location ➜</button>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type a message or area name..." onkeypress="handleKeyPress(event)">
+        <input type="file" id="fileUpload"
+accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+style="display:none"
+onchange="handleFileUpload(this)">
+        
+        <button id="send-btn" onclick="sendMessage()">➤</button>
+        <!-- LINE ~200 : ADD THIS -->
+<button id="upload-btn" onclick="document.getElementById('fileUpload').click()">📎</button>
+
+
+    </div>
+</div>
+
+<script type="module">
+  // 🔹 Firebase imports
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+// Existing imports ke niche ye add karein
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// Initialize Firestore
+const fs = getFirestore(app);
+window.fs = fs; // Global access ke liye
+
+  //import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+  // 🔹 Firebase config (PASTE YOUR REAL ONE)
+
+// Import the functions you need from the SDKs you need
+//import { initializeApp } from "firebase/app";
+//import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBNtMyBhWlkm1mBl2s3jgAW3dG9o_VhMGs",
+  authDomain: "swachh-sarthi-15547.firebaseapp.com",
+  projectId: "swachh-sarthi-15547",
+  storageBucket: "swachh-sarthi-15547.firebasestorage.app",
+  messagingSenderId: "989575521738",
+  appId: "1:989575521738:web:daeb667daf4a07dcea1b33",
+  measurementId: "G-ZXPYNEL08P"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+//const analytics = getAnalytics(app);
+
+// 🔹 FIX: Initialize Realtime Database and assign it to window.db
+  const db = getDatabase(app);
+  window.db = db;
+
+
+  // 🔹 SAVE USER MESSAGE TO FIREBASE
+  window.saveChatToFirebase = function (sender, message) {
+    push(ref(db, "chatbot_chats"), {
+      sender: sender,
+      message: message,
+      time: Date.now()
+    });then(() => {
+        console.log("Data sent to Firebase successfully!");
+    }).catch((error) => {
+        console.error("Firebase Error:", error);
+    });
+  };
+
+
+
+
+  // 🔹 LISTEN REALTIME (optional for now)
+  onChildAdded(ref(db, "chatbot_chats"), (snapshot) => {
+    console.log("New chat:", snapshot.val());
+  });
+
+  console.log("🔥 Firebase connected");
+</script>
+
+
+<script>
+
+
+// 1. CONFIGURATION
+    const GEMINI_API_KEY = 'AIzaSyD3Y6BfWxnJYRYowfX-rfOGmafiqq-BecE'; // REPLACE WITH YOUR ACTUAL KEY
+    // const API_KEY= "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=" . GEMINI_API_KEY;
+ const API_KEY =
+  "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key="
+  + GEMINI_API_KEY;
+
+    //const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
+
+    // MOCK DATA (In a real app, this comes from Firebase)
+    const mockDatabase = {
+        "Downtown": {
+            status: "Cleaned",
+            lastDate: "2023-10-25",
+            complaints: "0 Pending",
+            risk: "Low",
+            frequency: "Daily"
+        },
+        "Westside": {
+            status: "Scheduled",
+            lastDate: "2023-10-23",
+            complaints: "2 Resolved, 1 Pending",
+            risk: "Medium",
+            frequency: "Twice a week"
+        }
+    };
+
+    const chatWindow = document.getElementById('chat-window');
+    const userInput = document.getElementById('user-input');
+
+
+    function sendMessage() {
+    // 1. Get the actual element and its value
+    const inputElement = document.getElementById('user-input');
+    const text = inputElement.value.trim();
+    
+    if (text === "") return;
+
+    // 2. Add user message to UI and Firebase
+    addMessage(text, 'user-msg');
+
+    // 3. FIX: Clear the actual input box on the screen
+    inputElement.value = ""; 
+
+    // 4. Trigger AI Response with a small delay
+    setTimeout(() => {
+        processAIResponse(text);
+    }, 600);
+}
+
+    /* function sendMessage() {
+        const text = userInput.value.trim();
+        if (text === "") return;
+
+        addMessage(text, 'user-msg');   mera wala he chatgpt ka 
+        userInput.value = "";
+        
+        // Simulate AI Processing delay
+        setTimeout(() => {
+            processAIResponse(text);
+        }, 600);
+    } */
+
+    function handleQuickAction(action) {
+        addMessage(action, 'user-msg');
+        setTimeout(() => processAIResponse(action), 600);
+    }
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') sendMessage();
+    }
+
+    function addMessage(text, type) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${type}`;
+        msgDiv.innerText = text;
+        chatWindow.appendChild(msgDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+        // 🔥 Firebase me chat save (optional + safe)
+    if (window.saveChatToFirebase) {
+        const sender = type === 'user-msg' ? 'user' : 'bot';
+        window.saveChatToFirebase(sender, text);
+    }
+    }
+
+    /*function processAIResponse(input) {
+        const query = input.toLowerCase();
+        let response = "";
+
+        // Logic based on your rules
+        if (query.includes("status") || query.includes("cleaned")) {
+            // Check for area names in input
+            let foundArea = Object.keys(mockDatabase).find(area => query.includes(area.toLowerCase()));
+            
+            if (foundArea) {
+                const data = mockDatabase[foundArea];
+                response = `Status for ${foundArea}:\n• Cleaning Status: ${data.status}\n• Last Cleaned: ${data.lastDate}\n• Frequency: ${data.frequency}`;
+            } else {
+                response = "Please provide the specific area name to check the cleaning status.";
+            }
+        } 
+        else if (query.includes("complaint")) {
+            let foundArea = Object.keys(mockDatabase).find(area => query.includes(area.toLowerCase()));
+            if (foundArea) {
+                response = `Complaint Record for ${foundArea}:\n• Status: ${mockDatabase[foundArea].complaints}\n• We are working to resolve pending issues as per schedule.`;
+            } else {
+                response = "To check complaints, please mention your area name (e.g., Downtown).";
+            }
+        }
+        else if (query.includes("risk")) {
+            let foundArea = Object.keys(mockDatabase).find(area => query.includes(area.toLowerCase()));
+            if (foundArea) {
+                response = `Risk Assessment for ${foundArea}:\n• Current Risk Level: ${mockDatabase[foundArea].risk}.\n• Please ensure proper disposal to keep risk levels low.`;
+            } else {
+                response = "According to our current records, this information is not available for the specified area.";
+            }
+        }
+        else if (query.includes("awareness") || query.includes("help")) {
+            response = "Proper waste segregation helps the environment. Ensure you separate wet and dry waste before disposal. Civic responsibility is key to a cleaner city.";
+        }
+        else {
+            response = "I am a Waste Management Assistant. Your query appears to be outside my scope. Please ask about area cleaning, complaints, or waste status.";
+        }
+
+        addMessage(response, 'bot-msg');
+    }*/
+
+    async function processAIResponse(input) {
+    const queryText = input.toLowerCase();
+    let response = "";
+
+    // A. COMPLAINT FILING LOGIC (e.g., "Uttam in Thane garbage not cleaned")
+    if (queryText.includes("not cleaned") || queryText.includes("complaint")) {
+        const words = queryText.split(" ");
+        // Simple extraction logic
+        const city = words.find(w => ["thane", "mumbai", "pune"].includes(w)) || "Unknown";
+        
+        try {
+            await window.fs.collection(window.fs, "complaints").add({
+                userName: "Chatbot User",
+                city: city,
+                desc: input,
+                status: "Pending",
+                createdAt: new Date()
+            });
+            response = `Aapki complaint ${city} ke liye register ho gayi hai. Status: Pending.`;
+        } catch (e) {
+            response = "Complaint register karne mein dikat aa rahi hai.";
+        }
+    }
+
+    // B. STATUS & RISK FETCH LOGIC (Firestore se data lana)
+    else if (queryText.includes("risk") || queryText.includes("status")) {
+        const cityName = queryText.split(" ").pop(); // Last word ko city maan rahe hain
+        
+        const q = query(collection(window.fs, "complaints"), where("city", "==", cityName));
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+            let count = querySnapshot.size;
+            let lastStatus = querySnapshot.docs[0].data().status;
+            let risk = count >= 5 ? "Critical" : count >= 3 ? "Moderate" : "Low";
+            
+            response = `Data for ${cityName}:\n• Risk Level: ${risk}\n• Complaints: ${count}\n• Latest Status: ${lastStatus}`;
+        } else {
+            response = `Sorry, ${cityName} ke liye koi record nahi mila.`;
+        }
+    } 
+    else {
+        response = "I can help with Risk Levels and Complaint Status. Try 'Thane risk level'.";
+    }
+
+    addMessage(response, 'bot-msg');
+}
+
+    // LINE ~330 : ADD THIS
+function getLiveLocation() {
+    if (!navigator.geolocation) {
+        addMessage("Location not supported.", "bot-msg");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        document.getElementById("map").style.display = "block";
+
+        const map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat, lng },
+            zoom: 15
+        });
+
+        new google.maps.Marker({
+            position: { lat, lng },
+            map: map
+        });
+
+        addMessage(
+          `Live location detected (Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)})`,
+          "bot-msg"
+        );
+    });
+}
+
+
+// LINE ~360 : ADD THIS
+function handleFileUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    addMessage(`Uploaded file: ${file.name}`, "user-msg");
+
+    addMessage(
+      "Your document or photo has been received and will be reviewed by the concerned department.",
+      "bot-msg"
+    );
+}
+
+</script>
+
+</body>
+</html>
