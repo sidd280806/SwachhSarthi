@@ -5,7 +5,7 @@ An AI-powered smart waste management platform that helps cities **predict garbag
 ---
 
 ## 🚀 **Live MVP**
-🔗 **MVP Link:** https://swachh-sarthi-git-main-siddhi-patils-projects-4dc9fd57.vercel.app/
+🔗 **MVP Link:** https://swachhsarthi-sidd.vercel.app/
 ---
 
 ## 🧠 **Problem Statement**
